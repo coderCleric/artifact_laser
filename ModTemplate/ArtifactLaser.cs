@@ -8,7 +8,6 @@ namespace ArtifactLaser
     {
         //Setting Variables
         private float timeToDie;
-        private bool isLaserEnabled;
 
         //Functional Variables
         private GhostBrain[] ghosts;
@@ -56,10 +55,8 @@ namespace ArtifactLaser
         public void Update()
         {
             //Check to see if any ghosts are being lasered
-            if (isLaserEnabled)
-            {
-                KillGhosts();
-            }
+            KillGhosts();
+            
         }
 
         /**
@@ -108,7 +105,6 @@ namespace ArtifactLaser
          */
         public override void Configure(IModConfig config)
         {
-            this.isLaserEnabled = config.GetSettingsValue<bool>("enableLaser");
             this.timeToDie = config.GetSettingsValue<float>("timeToKill");
         }
     }
