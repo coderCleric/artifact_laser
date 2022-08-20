@@ -1,3 +1,17 @@
 {
-  "enabled": true
+  "enabled": true,
+  "settings": {
+    "enableLaser": {
+      "type": "toggle",
+      "value": true,
+      "yes": "Yes",
+      "no": "No",
+      "title": "Enable Artifact Laser"
+    },
+    "timeToKill": {
+      "type": "number",
+      "value": 2,
+      "title": "Seconds to Kill"
+    }
+  }
 }
