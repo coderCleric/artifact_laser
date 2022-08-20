@@ -4,25 +4,7 @@ Use this project as a base for new Outer Wilds mods.
 
 <!-- TOC -->
 
-- [Prerequisites](#prerequisites)
-- [How to use this template](#how-to-use-this-template)
-- [Editing manifest.json](#editing-manifestjson)
-  - [fileName](#filename)
-  - [author](#author)
-  - [name](#name)
-  - [uniqueName](#uniquename)
-  - [version](#version)
-  - [owmlVersion](#owmlversion)
-- [Editing ModTemplate.csproj.user](#editing-modtemplatecsprojuser)
-- [Updating OWML](#updating-owml)
-- [Building the mod](#building-the-mod)
-- [Releasing the mod](#releasing-the-mod)
-  - [Increasing the version](#increasing-the-version)
-  - [Pushing the code to GitHub](#pushing-the-code-to-github)
-  - [Creating a file for the release](#creating-a-file-for-the-release)
-  - [Uploading the release to GitHub](#uploading-the-release-to-github)
-  - [Adding your mod to the database](#adding-your-mod-to-the-database)
-- [Troubleshooting](#troubleshooting)
+
 
 <!-- /TOC -->
 
