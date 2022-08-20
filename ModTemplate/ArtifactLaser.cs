@@ -56,7 +56,6 @@ namespace ArtifactLaser
         {
             //Check to see if any ghosts are being lasered
             KillGhosts();
-            
         }
 
         /**
