@@ -12,6 +12,7 @@ namespace ArtifactLaser
     {
         private GhostBrain ghost;
         private float deathTimer;
+        private AudioSource audioSource;
 
         /**
          * Make a new ghost container with the given ghost brain
@@ -20,6 +21,17 @@ namespace ArtifactLaser
         {
             this.ghost = ghost;
             this.deathTimer = ArtifactLaser.GetTimeToDie();
+
+            //Make the audio source
+            this.audioSource = this.ghost.gameObject.AddComponent<AudioSource>();
+            if (Locator.GetAudioManager() == null)
+                ArtifactLaser.DebugPrint("No audio manager");
+            this.audioSource.clip = Locator.GetAudioManager().GetSingleAudioClip(AudioType.EnterVolumeDamageFire_LP, true);
+            this.audioSource.loop = true;
+            this.audioSource.volume = 1;
+            this.audioSource.spatialBlend = 1f;
+            this.audioSource.minDistance = 2;
+            this.audioSource.Stop();
         }
 
         /**
@@ -31,8 +43,9 @@ namespace ArtifactLaser
             if (ghost == null || !ghost.enabled || ghost._sensors == null || ghost._sensors._lightSensor == null || !ghost._data.isAlive)
                 return false;
 
-            //Check if their light sensor is lit by the player lantern
-            if (ghost._sensors._lightSensor.IsIlluminatedByLantern(Locator.GetDreamWorldController().GetPlayerLantern().GetLanternController()))
+            //Check if their light sensor is lit by the focused player lantern
+            if (ghost._sensors._lightSensor.IsIlluminatedByLantern(Locator.GetDreamWorldController().GetPlayerLantern().GetLanternController()) && 
+                Locator.GetDreamWorldController().GetPlayerLantern().GetLanternController().IsFocused())
                 return true; //Return true if it is
 
             //Otherwise, return false
@@ -56,6 +69,10 @@ namespace ArtifactLaser
                 return true;
             }
 
+            //Start playing the burn noise if it isn't already
+            if(!this.audioSource.isPlaying)
+                this.audioSource.Play();
+
             //Return false if they lived
             return false;
         }
@@ -66,6 +83,15 @@ namespace ArtifactLaser
         public void ResetTimer()
         {
             this.deathTimer = ArtifactLaser.GetTimeToDie();
+            this.audioSource.Stop();
+        }
+
+        /**
+         * Tells whether or not the container contains the given ghost brain
+         */
+        public bool ContainsGhost(GhostBrain g)
+        {
+            return this.ghost == g;
         }
     }
 }

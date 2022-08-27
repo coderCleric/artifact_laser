@@ -1,6 +1,7 @@
 ﻿using OWML.ModHelper;
 using UnityEngine;
 using OWML.Common;
+using System.Collections.Generic;
 
 namespace ArtifactLaser
 {
@@ -10,11 +11,12 @@ namespace ArtifactLaser
         private static float timeToDie;
 
         //Functional Variables
-        public static GhostContainer[] ghosts;
+        public static List<GhostContainer> ghosts = new List<GhostContainer>();
         private static int killsThisLoop = 0;
         private static int totalKills = 0;
         private static bool displayCount = false;
         private ScreenPrompt killDisplay = new ScreenPrompt("");
+        private static ArtifactLaser instance;
 
         //Needed just for inter-file communication
         /**
@@ -58,7 +60,21 @@ namespace ArtifactLaser
             // Starting here, you'll have access to OWML's mod helper.
             ModHelper.Console.WriteLine($"In {nameof(ArtifactLaser)}!", MessageType.Success);
 
-            //Set it so we wait for the player to wake up
+            //These are needed to manage the ghost containers
+            //Set it so we stick ghosts in containers as they appear
+            ModHelper.HarmonyHelper.AddPostfix<GhostBrain>(
+                "Start",
+                typeof(Patches),
+                nameof(Patches.OnGhostStart));
+
+            //Set it so we remove containers as their ghosts are destroyed
+            ModHelper.HarmonyHelper.AddPrefix<GhostBrain>(
+                "OnDestroy",
+                typeof(Patches),
+                nameof(Patches.OnGhostDestroyed));
+
+            //These are needed for the kill counter
+            //Set it so we reset the kill count for this loop when the player wakes up
             ModHelper.HarmonyHelper.AddPostfix<PlayerBody>(
                 "Awake",
                 typeof(Patches),
@@ -70,10 +86,7 @@ namespace ArtifactLaser
                 typeof(Patches),
                 nameof(Patches.OnMainMenuExit));
 
-            //Initialize our ghost array to null for the time being
-            ghosts = null;
-
-            Patches.mainThing = this;
+            instance = this;
         }
 
         /**
@@ -123,11 +136,11 @@ namespace ArtifactLaser
          */
         private void ManageGhosts()
         {
-            //Only do stuff if we've initialized our list
-            if (ghosts != null)
+            //Only do stuff if we have things in our list
+            if (!(ghosts.Count == 0))
             {
                 //Iterate through the array of ghosts
-                for (int i = 0; i < ghosts.Length; i++)
+                for (int i = 0; i < ghosts.Count; i++)
                 {
                     //Check if they're lit up by the player
                     if (ghosts[i].IsLitByPlayer())
@@ -162,9 +175,9 @@ namespace ArtifactLaser
             timeToDie = config.GetSettingsValue<float>("timeToKill");
         }
 
-        public void DebugPrint(string s)
+        public static void DebugPrint(string s)
         {
-            ModHelper.Console.WriteLine(s);
+            instance.ModHelper.Console.WriteLine(s);
         }
     }
  }
