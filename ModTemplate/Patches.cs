@@ -16,19 +16,29 @@ namespace ArtifactLaser
          */
         public static void OnPlayerAwake()
         {
-            mainThing.debugPrint("Trying to find ghosts.");
-
+            //Generate all of the ghost containers
+            mainThing.DebugPrint("Trying to find ghosts.");
             //Find all of the ghost brains
-            ArtifactLaser.ghosts = Resources.FindObjectsOfTypeAll<GhostBrain>();
+            GhostBrain[] brains = Resources.FindObjectsOfTypeAll<GhostBrain>();
 
-            //Initialize the array of ghost timers
-            ArtifactLaser.ghostLaserTimers = new float[ArtifactLaser.ghosts.Length];
-            for (int i = 0; i < ArtifactLaser.ghostLaserTimers.Length; i++)
+            //Generate the list of containers
+            ArtifactLaser.ghosts = new GhostContainer[brains.Length];
+            for(int i = 0; i < brains.Length; i++)
             {
-                ArtifactLaser.ghostLaserTimers[i] = ArtifactLaser.timeToDie;
+                ArtifactLaser.ghosts[i] = new GhostContainer(brains[i]);
             }
+            mainThing.DebugPrint($"Found {ArtifactLaser.ghosts.Length} ghosts!");
 
-            mainThing.debugPrint($"Found {ArtifactLaser.ghosts.Length} ghosts!");
+             //Reset the kill count for this loop
+             ArtifactLaser.ResetLoopKills();
+        }
+
+        /**
+         * Clears the total kills and sets the counter to not display
+         */
+        public static void OnMainMenuExit()
+        {
+            ArtifactLaser.Reset();
         }
     }
 }
