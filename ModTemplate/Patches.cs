@@ -11,34 +11,21 @@ namespace ArtifactLaser
     {
 
         /**
-         * Do certain actions when the player body wakes, like getting the list of owlks
-         */
-        /*public static void OnEnterDreamWorld()
-        {
-            //Generate all of the ghost containers
-            ArtifactLaser.DebugPrint("Trying to find ghosts.");
-
-            //Find all of the ghost brains
-            GhostBrain[] brains = Resources.FindObjectsOfTypeAll<GhostBrain>();
-
-            //Generate the list of containers
-            ArtifactLaser.ghosts = new GhostContainer[brains.Length];
-            for (int i = 0; i < brains.Length; i++)
-            {
-                ArtifactLaser.ghosts[i] = new GhostContainer(brains[i]);
-            }
-
-            ArtifactLaser.DebugPrint($"Found {ArtifactLaser.ghosts.Length} ghosts!");
-
-             //Reset the kill count for this loop
-             ArtifactLaser.ResetLoopKills();
-        }*/
-
-        /**
          * Add ghosts to the list as they appear
          */
         public static void OnGhostStart(GhostBrain __instance)
         {
+            /*Leftover from when I wanted to add spark particles to burning ghosts
+            //Steal the campfire spark material
+            if (GhostContainer.sparkMaterial == null)
+            {
+                GameObject tmp1 = GameObject.Find("LaunchTower/Effects_HEA_Campfire/Effects/Sparks");
+                ParticleSystem tmp2 = tmp1.GetComponent<ParticleSystem>();
+                ParticleSystemRenderer tmpRend = tmp2.GetComponent<ParticleSystemRenderer>();
+                GhostContainer.sparkMaterial = tmpRend.material;
+            }*/
+
+            //Make and add the container
             ArtifactLaser.ghosts.Add(new GhostContainer(__instance));
         }
 

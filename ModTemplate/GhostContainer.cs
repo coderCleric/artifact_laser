@@ -13,6 +13,9 @@ namespace ArtifactLaser
         private GhostBrain ghost;
         private float deathTimer;
         private AudioSource audioSource;
+        private ParticleSystem particleSystem;
+        //public static Material sparkMaterial = null;
+        private bool isDoingParticles;
 
         /**
          * Make a new ghost container with the given ghost brain
@@ -21,6 +24,7 @@ namespace ArtifactLaser
         {
             this.ghost = ghost;
             this.deathTimer = ArtifactLaser.GetTimeToDie();
+            this.isDoingParticles = false;
 
             //Make the audio source
             this.audioSource = this.ghost.gameObject.AddComponent<AudioSource>();
@@ -32,6 +36,31 @@ namespace ArtifactLaser
             this.audioSource.spatialBlend = 1f;
             this.audioSource.minDistance = 2;
             this.audioSource.Stop();
+
+            //Get the particle system
+            this.particleSystem = this.ghost._effects._deathParticleSystem;
+            
+            /*Left over from when I wanted to add fire particles
+            //Do stuff to the renderer
+            ParticleSystemRenderer rend = this.particleSystem.GetComponent<ParticleSystemRenderer>();
+            rend.material = sparkMaterial;
+            rend.minParticleSize = 0;
+            rend.maxParticleSize = 0.5f;
+
+            //Do stuff to the main component
+            ParticleSystem.MainModule main = this.particleSystem.main;
+            main.startSize = new ParticleSystem.MinMaxCurve(0.02f, 0.03f);
+            main.loop = true;
+            main.duration = 5;
+            main.emitterVelocityMode = ParticleSystemEmitterVelocityMode.Rigidbody;*/
+        }
+
+        /**
+         * Gets the name of the ghost
+         */
+        public string getName()
+        {
+            return this.ghost._name;
         }
 
         /**
@@ -62,16 +91,22 @@ namespace ArtifactLaser
             //Reduce their timer
             this.deathTimer -= Time.deltaTime;
 
+            //Start playing the burn noise if it isn't already
+            if (!this.audioSource.isPlaying)
+                this.audioSource.Play();
+
+            //Start the particle system
+            this.isDoingParticles = true;
+            if (!this.particleSystem.isEmitting)
+                this.particleSystem.Play();
+
             //If their timer is now over, kill them and return true
             if (deathTimer <= 0)
             {
                 ghost.Die();
+                this.isDoingParticles = false;
                 return true;
             }
-
-            //Start playing the burn noise if it isn't already
-            if(!this.audioSource.isPlaying)
-                this.audioSource.Play();
 
             //Return false if they lived
             return false;
@@ -84,6 +119,10 @@ namespace ArtifactLaser
         {
             this.deathTimer = ArtifactLaser.GetTimeToDie();
             this.audioSource.Stop();
+
+            //Only stop the particles if we're doing them
+            if(this.isDoingParticles)
+                this.particleSystem.Stop();
         }
 
         /**

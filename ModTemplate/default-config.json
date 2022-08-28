@@ -5,6 +5,16 @@
       "type": "number",
       "value": 2,
       "title": "Seconds to Kill"
+    },
+    "countEnabled": {
+      "type": "toggle",
+      "value": true,
+      "title": "Display Kill Count"
+    },
+    "feedEnabled": {
+      "type": "toggle",
+      "value": true,
+      "title": "Display Kill Feed"
     }
   }
 }

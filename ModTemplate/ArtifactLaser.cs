@@ -9,14 +9,24 @@ namespace ArtifactLaser
     {
         //Setting Variables
         private static float timeToDie;
+        private bool countEnabled;
+        private bool feedEnabled;
 
-        //Functional Variables
+        //For actual functionality
         public static List<GhostContainer> ghosts = new List<GhostContainer>();
+        private static ArtifactLaser instance;
+
+        //For the kill counter
         private static int killsThisLoop = 0;
         private static int totalKills = 0;
         private static bool displayCount = false;
         private ScreenPrompt killDisplay = new ScreenPrompt("");
-        private static ArtifactLaser instance;
+
+        //For the killfeed
+        private ScreenPrompt killfeed = new ScreenPrompt("");
+        private List<string> recentlyKilled = new List<string>();
+        private float killfeedResetTime = 3;
+        private float timeToReset = 0;
 
         //Needed just for inter-file communication
         /**
@@ -97,6 +107,9 @@ namespace ArtifactLaser
             //Manage the kill count display
             this.ManageKillDisplay();
 
+            //Manage the kill feed
+            this.ManageKillfeed();
+
             //Manage the ghosts
             this.ManageGhosts();
         }
@@ -129,6 +142,52 @@ namespace ArtifactLaser
             {
                 this.killDisplay.SetVisibility(false);
             }
+
+            //Hide the count if it is disabled
+            if (!countEnabled)
+                this.killDisplay.SetVisibility(false);
+        }
+
+        /**
+         * Manages the killfeed
+         */
+        private void ManageKillfeed()
+        {
+            //Decay the name list
+            this.timeToReset -= Time.deltaTime;
+            this.timeToReset = Mathf.Max(0, this.timeToReset);
+
+            //Check if we need to clear it
+            if(this.timeToReset <= 0)
+            {
+                this.recentlyKilled.Clear();
+            }
+
+            //Add the prompt if it's not already in the list
+            if (displayCount && !Locator.GetPromptManager().GetScreenPromptList(PromptPosition.BottomCenter).Contains(killfeed))
+            {
+                Locator.GetPromptManager().AddScreenPrompt(this.killfeed, PromptPosition.BottomCenter);
+            }
+
+            //If there are names, display them and make the prompt visible
+            if (this.recentlyKilled.Count > 0)
+            {
+                string display = "";
+                foreach(string i in this.recentlyKilled)
+                {
+                    display = display + "\n" + i + " just died!";
+                }
+                this.killfeed.SetText(display);
+                this.killfeed.SetVisibility(true);
+            }
+
+            //If there aren't, make the prompt invisible
+            else
+                this.killfeed.SetVisibility(false);
+
+            //Hide the feed if it is disabled
+            if (!feedEnabled)
+                this.killfeed.SetVisibility(false);
         }
 
         /**
@@ -154,6 +213,8 @@ namespace ArtifactLaser
                             RumbleManager.Pulse(0.5f, 0.5f, 1.5f);
                             killsThisLoop++;
                             totalKills++;
+                            this.recentlyKilled.Add(ghosts[i].getName());
+                            this.timeToReset = this.killfeedResetTime;
                             displayCount = true;
                         }
                     }
@@ -173,6 +234,8 @@ namespace ArtifactLaser
         public override void Configure(IModConfig config)
         {
             timeToDie = config.GetSettingsValue<float>("timeToKill");
+            countEnabled = config.GetSettingsValue<bool>("countEnabled");
+            feedEnabled = config.GetSettingsValue<bool>("feedEnabled");
         }
 
         public static void DebugPrint(string s)
