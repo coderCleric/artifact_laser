@@ -14,7 +14,6 @@ namespace ArtifactLaser
 
         //For actual functionality
         public static List<GhostContainer> ghosts = new List<GhostContainer>();
-        private static ArtifactLaser instance;
 
         //For the kill counter
         private static int killsThisLoop = 0;
@@ -95,8 +94,6 @@ namespace ArtifactLaser
                 "OnExitToMainMenu",
                 typeof(Patches),
                 nameof(Patches.OnMainMenuExit));
-
-            instance = this;
         }
 
         /**
@@ -175,9 +172,10 @@ namespace ArtifactLaser
                 string display = "";
                 foreach(string i in this.recentlyKilled)
                 {
-                    display = display + "\n" + i + " just died!";
+                    display = display + "\n" + i;
                 }
                 this.killfeed.SetText(display);
+                this.killfeed.SetTextColor(new Color(50f / 255f, 205f / 255f, 50f / 255f));
                 this.killfeed.SetVisibility(true);
             }
 
@@ -213,7 +211,7 @@ namespace ArtifactLaser
                             RumbleManager.Pulse(0.5f, 0.5f, 1.5f);
                             killsThisLoop++;
                             totalKills++;
-                            this.recentlyKilled.Add(ghosts[i].getName());
+                            this.recentlyKilled.Add(KillMessageConverter.getRandomMessage(ghosts[i].getName()));
                             this.timeToReset = this.killfeedResetTime;
                             displayCount = true;
                         }
@@ -236,11 +234,6 @@ namespace ArtifactLaser
             timeToDie = config.GetSettingsValue<float>("timeToKill");
             countEnabled = config.GetSettingsValue<bool>("countEnabled");
             feedEnabled = config.GetSettingsValue<bool>("feedEnabled");
-        }
-
-        public static void DebugPrint(string s)
-        {
-            instance.ModHelper.Console.WriteLine(s);
         }
     }
  }

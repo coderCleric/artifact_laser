@@ -6,6 +6,7 @@ Are you tired of constantly being grabbed by the resident of the dream world? Do
 rearranged your spine?) Well now you can! This mod gives you the power to get rid of those owlks once and for all! (Or as once and for all as you can in a 22-minute time loop) 
 
 # What Does This Mod Do?
+# ![artifact_laser](Assets/roasted_elk.webp)
 This mod turns the artifact that you use to navigate the dreamworld into a deadly laser. Just focus the beam on the dreamworld residents for long enough and poof! No more worrying about stealth.
 
 # Settings

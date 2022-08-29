@@ -28,8 +28,6 @@ namespace ArtifactLaser
 
             //Make the audio source
             this.audioSource = this.ghost.gameObject.AddComponent<AudioSource>();
-            if (Locator.GetAudioManager() == null)
-                ArtifactLaser.DebugPrint("No audio manager");
             this.audioSource.clip = Locator.GetAudioManager().GetSingleAudioClip(AudioType.EnterVolumeDamageFire_LP, true);
             this.audioSource.loop = true;
             this.audioSource.volume = 1;
